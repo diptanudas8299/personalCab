@@ -370,3 +370,167 @@ Send a JSON object in the following format:
 
 - Passwords are securely hashed before storage.
 - All fields are required unless marked as optional.
+```
+
+---
+
+## Captain Login
+
+**POST** `/captain/login`
+
+Authenticates a captain using email and password.
+
+### Request Body
+
+```jsonc
+{
+  "email": "jane.smith@example.com", // required, must be a valid email
+  "password": "yourPassword123"      // required, min 6 chars
+}
+```
+
+### Success Response
+
+**Status:** `200 OK`
+
+```jsonc
+{
+  "token": "<jwt_token>",
+  "captain": {
+    "_id": "60f7c2b5e1d2c80017e4a456",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "vehicleType": "car",
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4
+    }
+  }
+}
+```
+
+### Error Response
+
+**Status:** `400 Bad Request` (Validation error)
+
+```jsonc
+{
+  "errors": [
+    {
+      "msg": "Please enter a valid email address",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+**Status:** `401 Unauthorized` (Invalid credentials)
+
+```jsonc
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
+
+## Get Captain Profile
+
+**GET** `/captain/profile`
+
+Returns the authenticated captain's profile. Requires a valid JWT token.
+
+### Headers
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response
+
+**Status:** `200 OK`
+
+```jsonc
+{
+  "captain": {
+    "_id": "60f7c2b5e1d2c80017e4a456",
+    "fullname": {
+      "firstname": "Jane",
+      "lastname": "Smith"
+    },
+    "email": "jane.smith@example.com",
+    "vehicle": {
+      "vehicleType": "car",
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4
+    }
+  }
+}
+```
+
+### Error Response
+
+**Status:** `401 Unauthorized`
+
+```jsonc
+{
+  "message": "Unauthorized"
+}
+```
+
+---
+
+## Captain Logout
+
+**GET** `/captain/logout`
+
+Logs out the authenticated captain by blacklisting the JWT token.
+
+### Headers
+
+```
+Authorization: Bearer <jwt_token>
+```
+
+### Success Response
+
+**Status:** `200 OK`
+
+```jsonc
+{
+  "message": "Logout successfully"
+}
+```
+
+### Error Response
+
+**Status:** `401 Unauthorized`
+
+```jsonc
+{
+  "message": "Unauthorized"
+}
+```
+
+---
+
+## Status Codes
+
+- `201 Created` – Captain successfully registered.
+- `200 OK` – Request successful.
+- `400 Bad Request` – Invalid or missing input data.
+- `401 Unauthorized` – Invalid or missing authentication.
+
+---
+
+## Notes
+
+- Passwords are securely hashed before storage.
+- All fields are required unless marked as optional.
+- Protected endpoints require a valid JWT token.
